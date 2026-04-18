@@ -1,0 +1,26 @@
+# Blender 3.5.1 MTL File: 'Bleacher_v2.blend'
+# www.blender.org
+
+newmtl Metal
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/FrameBaseColor_4096px.png
+map_Ns C:/FrameRoughness_4096px.png
+map_refl C:/FrameMetallic_4096px.png
+map_Bump -bm 1.000000 C:/FrameNormal_4096px.png
+
+newmtl Wood
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/SeatBaseColor_4096px.png
+map_Ns C:/SeatRoughness_4096px.png
+map_refl C:/SeatMetallic_4096px.png
+map_Bump -bm 1.000000 C:/SeatNormal_4096px.png

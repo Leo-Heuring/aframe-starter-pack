@@ -1,15 +1,87 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"> </script>
+    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+    <script>
+
+      AFRAME.registerComponent('world-wrap', { //figured this out with help from: https://aframe.io/docs/1.7.0/introduction/writing-a-component.html, and figured out how it keeps the player in position.
+        schema: {
+          areaSize:   { type: 'number', default: 40 },
+          edgeBuffer: { type: 'number', default: 10 }
+        },
+        tick() {
+          const pos     = this.el.object3D.position;
+          const half    = this.data.areaSize / 2;
+          const buffer  = this.data.edgeBuffer;
+
+          if (pos.x > half - buffer)  pos.x = -(half - buffer);
+          if (pos.x < -(half - buffer)) pos.x =  (half - buffer);
+          if (pos.z > half - buffer)  pos.z = -(half - buffer);
+          if (pos.z < -(half - buffer)) pos.z =  (half - buffer);
+        }
+      });
+
+      window.addEventListener('load', () => { // I also used this: https://aframe.io/docs/1.7.0/introduction/javascript-events-dom-apis.html To help with randomly generating everything in place.
+        const scene = document.querySelector('a-scene');
+
+        const balls = [
+          { obj: '#ball-obj',       basecolor: '#ball-basecolor',       normal: '#ball-normal',       roughness: '#ball-roughness',       metalness: '#ball-metalness',       ao: '#ball-ao' },
+          { obj: '#tennis-obj',     basecolor: '#tennis-basecolor',     normal: '#tennis-normal',     roughness: '#tennis-roughness',     metalness: '#tennis-metalness',     ao: '#tennis-ao' },
+          { obj: '#volleyball-obj', basecolor: '#volleyball-basecolor', normal: '#volleyball-normal', roughness: '#volleyball-roughness', metalness: '#volleyball-metalness', ao: '#volleyball-ao' }
+        ];
+
+        const count    = 250;
+        const areaSize = 40;
+
+        for (let i = 0; i < count; i++) {
+          const ball = balls[Math.floor(Math.random() * balls.length)];
+          const x = (Math.random() - 0.5) * areaSize;
+          const z = (Math.random() - 0.5) * areaSize;
+
+          const el = document.createElement('a-entity');
+          el.setAttribute('position', `${x} 0 ${z}`);
+          el.setAttribute('obj-model', `obj: ${ball.obj}`);
+          el.setAttribute('material', `shader: standard; src: ${ball.basecolor}; normalMap: ${ball.normal}; roughnessMap: ${ball.roughness}; metalnessMap: ${ball.metalness}; ambientOcclusionMap: ${ball.ao}; roughness: 1; metalness: 1`);
+          el.setAttribute('scale', '0.025 0.025 0.025');
+          scene.appendChild(el);
+        }
+      });
+    </script>
   </head>
   <body>
     <a-scene>
-      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
-      <a-sky color="#ECECEC"></a-sky>
+
+      <a-assets>
+        <img id="sky-img" src="kloppenheim_02_4k.png">
+        <a-asset-item id="ball-obj"       src="Ball.obj"></a-asset-item> <!-- I also use blender quite often so I'm used to doing normal maps and color maps for giving color: AKA this: https://aframe.io/docs/1.7.0/components/material.html -->
+        <a-asset-item id="tennis-obj"     src="tennis_ball.obj"></a-asset-item>
+        <a-asset-item id="volleyball-obj" src="volleyball.obj"></a-asset-item>
+        <img id="ball-basecolor"          src="Balltextures/ball_basecolor.png">
+        <img id="ball-normal"             src="Balltextures/ball_normal.png">
+        <img id="ball-roughness"          src="Balltextures/ball_roughness.png">
+        <img id="ball-metalness"          src="Balltextures/ball_metalness.png">
+        <img id="ball-ao"                 src="Balltextures/ball_ao.png">
+        <img id="tennis-basecolor"        src="Tennistextures/tennis_ball_Albedo.png">
+        <img id="tennis-normal"           src="Tennistextures/tennis_ball_Normal.png">
+        <img id="tennis-roughness"        src="Tennistextures/tennis_ball_Roughness.png">
+        <img id="tennis-metalness"        src="Tennistextures/tennis_ball_Metalness.png">
+        <img id="tennis-ao"               src="Tennistextures/tennis_ball_AO.png">
+        <img id="volleyball-basecolor"    src="Vollyballtextures/volleyball_Albedo.png">
+        <img id="volleyball-normal"       src="Vollyballtextures/volleyball_Normal.png">
+        <img id="volleyball-roughness"    src="Vollyballtextures/volleyball_Roughness.png">
+        <img id="volleyball-metalness"    src="Vollyballtextures/volleyball_Metalness.png">
+        <img id="volleyball-ao"           src="Vollyballtextures/volleyball_AO.png">
+      </a-assets>
+
+
+      <a-sky src="#sky-img"></a-sky>
+
+      <a-light type="ambient" intensity="0.5"></a-light>
+      <a-light type="directional" position="2 4 2" intensity="1"></a-light>
+      <a-plane position="0 0 0" rotation="-90 0 0" width="40" height="40" color="#7BC8A4"></a-plane>
+
+      <a-entity camera look-controls wasd-controls world-wrap="areaSize: 40; edgeBuffer: 10" position="0 1.6 0"></a-entity>
+
     </a-scene>
   </body>
 </html>
